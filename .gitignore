@@ -2,6 +2,8 @@ node_modules/
 .venv/
 __pycache__/
 .DS_Store
+.env
+.env.*
 # 模型与大素材（运行说明里给下载地址）
 core/tts/*.onnx
 core/tts/*.bin
