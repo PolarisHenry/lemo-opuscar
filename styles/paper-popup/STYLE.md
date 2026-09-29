@@ -70,7 +70,7 @@ Actors in focus, room objects as soft foreground or background; keep near pop-up
 
 - **Paper foley is the signature**: page swish, cardboard thump, pop-up snap (short sine sweep + crinkle), fold and crease, pull-tab slide, footsteps as tiny taps with crinkle, slat flaps, string-drop tinks; the book's spine creak and closing thump. All synthesizable from the page's event list.
 - **Character voices as typing blips**: one waveform and pitch range per character, a blip every other letter.
-- **Narration**: one warm storyteller, picture-book sentences; pronunciations kept apart from displayed text.
+- **Narration**: one warm storyteller, picture-book sentences (Chinese: CosyVoice **`longwan`** or **`longyuan`**, rate `-8%`); pronunciations kept apart from displayed text.
 - **Music**: whimsical, acoustic or toy-like: music box, pizzicato strings, clarinet, glockenspiel, ukulele, toy piano, brushes. Options: a warmer cue for anything in the real room; a bar-aligned internal edit of a library track so its ending lands on a picture event; a pull-tab's clicks setting a cue's pulse.
 - **Ambience**: room tone and a clock for the room; one bed per spread for the paper world.
 - **Silence** = the book held still with only room tone; before a turn that matters, or a hesitation.

@@ -15,7 +15,7 @@ The user gives a style and a topic, sometimes more (length, language, voice, mus
 - Voice and subtitles in the language the user writes in. Subtitles burned in and exported as `.srt`.
 - Loudness −14 LUFS.
 
-Say it in the questions when it matters: a natural Chinese voice uses Alibaba CosyVoice (DashScope or local service); offline, Kokoro reads Chinese but sounds plain (TECHNIQUE.md §4).
+Say it in the questions when it matters: a natural Chinese voice uses Alibaba CosyVoice (DashScope or local service); offline, Kokoro reads Chinese but sounds plain (TECHNIQUE.md §4). When casting voices, match the topic and style to the CosyVoice casting guide in TECHNIQUE.md §4 (e.g. `longwan` for soothing picture books & bedtime stories, `longcheng`/`longxiaochun` for documentaries, `longshuo` for tech).
 
 Requests that only change the plan:
 

@@ -63,7 +63,7 @@ Key figures ≥ 1/4 of frame height in close shots; keep bare paper at the botto
 - **Silence is a beat**: a full beat of nothing after a failure; a short breath before a wordless passage.
 - **Foley follows the material**: crayon = stick-slip band-passed noise whose grain follows stroke speed (colouring = rhythmic swishes); wet brush = soft low-passed noise with bristle grain, panned with the stroke; felt puffs, fabric swishes, a sharpener, a crayon set down, a page turn (lift / whoosh / flap). Ambience: faint crickets or birds, room tone, a distant clock.
 - **Mix**: music under narration, rising for wordless passages; metal voices get a gentle high lift. −14 LUFS.
-- **Voice**: a soft, warm storyteller, short lines with breaths. Compress before EQ, cut the highs, de-ess, a warm near-field reverb far under the dry voice; a few dB over the bed, never louder. Whisper-check every line, dry and on the final mix. Avoid famous-book phrases.
+- **Voice**: a soft, warm storyteller, short lines with breaths (Chinese: CosyVoice **`longwan`** or **`longyuan`**, rate `-8%`; character voices: **`longmiao`**). Compress before EQ, cut the highs, de-ess, a warm near-field reverb far under the dry voice; a few dB over the bed, never louder. Whisper-check every line, dry and on the final mix. Avoid famous-book phrases.
 
 ## 8. Native moves
 

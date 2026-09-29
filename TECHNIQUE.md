@@ -94,7 +94,13 @@ A small script (`cuecheck.py`, in `styles/<slug>/demo/tools/` of several demos) 
 
 - **TTS is only the default.** If the user brings a recording or names a voice, use that. Otherwise:
   - **English**: [Kokoro](https://github.com/thewh1teagle/kokoro-onnx), local, many voices (an unknown `voice` name makes `tts.py` print the full list; `af_` / `am_` are American, `bf_` / `bm_` British; cast the narrator for this film, not the demo's). `core/tts/tts.py lines.json out/` writes one WAV per line and a durations file. Its Chinese voices (`"lang": "cmn"`) work offline but sound plain.
-  - **Chinese**: `core/tts/tts_zh.py lines.json out/` uses CosyVoice with neural voices (`longxiaochun`, `longcheng`…), with the same outputs as `tts.py`, a rate per line and the silence trimmed. Supports Alibaba DashScope API (`DASHSCOPE_API_KEY`) or local CosyVoice service (`COSYVOICE_API_URL`).
+  - **Chinese**: `core/tts/tts_zh.py lines.json out/` uses CosyVoice with neural voices, with the same outputs as `tts.py`, a rate per line and the silence trimmed. Supports Alibaba DashScope API (`DASHSCOPE_API_KEY`) or local CosyVoice service (`COSYVOICE_API_URL`).
+    - **Casting guide for agents (中文选角推荐)**:
+      - **治愈绘本 / 睡前故事 / 温情童话** (`crayon-book`, `paper-popup`, `watercolor`): 旁白首选 **`longwan`**（龙婉，极其温柔舒缓的女声，建议配 `rate: -8%` 或 `speed: 0.92`）或 **`longyuan`**（龙渊，温暖治愈男声）；故事内可爱角色/小动物/小精灵用 **`longmiao`**（龙苗，萌系童声）或 **`longjielidou`**（杰力豆，活泼童声）。
+      - **纪录片 / 人文叙事 / 传统美学** (`paper-lantern`, `woodcut`, `ink-wash`, `urban-sketch`): 选用 **`longxiaochun`**（知性稳重女声）或 **`longcheng`**（醇厚质感男声）。
+      - **硬核科技 / 蓝图工程 / 暗色发布** (`dark-keynote`, `blueprint`, `hologram-hud`, `ascii-crt`): 选用 **`longshuo`**（磁性低沉男声）或 **`longcheng`**。
+      - **动效展示 / 现代快节奏 / 青春活力** (`swiss-motion`, `scifi-toon`): 选用 **`longhua`**（明快干练女声）或 **`longxing`**（阳光青年男声）。
+      - **民间传奇 / 历史评书** (`shadow-puppet`, `storytelling`): 选用 **`longshu`**（评书韵味男声）。
 - Spell numbers out in the TTS text and write them as digits in the subtitles.
 - **Check every line**: `core/tts/asr_check.py` transcribes each WAV with faster-whisper and compares it with the script (`--lang zh`: character by character); re-generate until it exits 0. A misheard character in a short Chinese line is normal: listen, and if it is right, put what the model heard in the line's `asr` field. It also writes word timestamps for placing lines and subtitles.
 - **Before mixing**: TTS has a high peak-to-average ratio. Compress the voice first, then balance by RMS: voice about 10 dB above the music.
