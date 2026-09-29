@@ -25,8 +25,7 @@ Fonts (SIL Open Font License 1.1, Google Fonts; files in fonts/src/, licence tex
 - Long Cang — the granddaughter's handwriting
 - Noto Serif SC — subtitles and credits
 
-Voice: Microsoft Edge neural TTS voice zh-CN-XiaoxiaoNeural, generated with the open-source edge-tts client
-(github.com/rany2/edge-tts). Check Microsoft's terms of use before commercial redistribution of the audio.
+Voice: Alibaba CosyVoice neural TTS voice longxiaochun, generated via core/tts/tts_zh.py.
 Speech check / word timings: faster-whisper (MIT) with the Systran faster-whisper-medium model (MIT).
 Sound effects: synthesized in mix.py (no samples).
 

@@ -5,7 +5,7 @@ lines.json = [{"id":..., "text":..., "voice":"bm_george", "speed":0.92, "lang":"
 模型：kokoro-v1.0.onnx / voices-v1.0.bin 放在本目录，下载：sh tools/fetch.sh voice（约 350 MB）
 路径限制：espeak-ng（Kokoro 用它把文字转成音素）的数据目录，解析软链后的真实路径必须短于 160 字节（汉字算 3 字节），否则找不到数据、
          报一个指向别人机器上某个路径（编译 espeak-ng 的那台）的莫名其妙的错。库放在 ~/lemo-opuscar 之类的短路径下就没事；本脚本开工前会检查并说明。
-要更自然的中文/日文等声音：core/tts/tts_zh.py（微软 edge-tts，要联网），接口和输出布局相同。
+要更自然的中文/日文等声音：core/tts/tts_zh.py（阿里 CosyVoice），接口和输出布局相同。
 """
 import sys, json, os, re
 if len(sys.argv) < 3 or sys.argv[1] in ('-h', '--help'):
@@ -20,7 +20,7 @@ lines, out = json.load(open(sys.argv[1], encoding='utf-8')), sys.argv[2]
 wrong = [L['id'] for L in lines if L.get('lang', 'en-us').lower().startswith('en') and CJK.search(L['text'])]
 if wrong:
     sys.exit(f"tts.py: line(s) {', '.join(map(str, wrong))} contain Chinese/Japanese/Korean text but lang is English, and Kokoro would read them as noise.\n"
-             f"  offline: add \"lang\": \"cmn\" and a zf_*/zm_* voice to those lines;  more natural (needs network): python core/tts/tts_zh.py {sys.argv[1]} {out}")
+             f"  offline: add \"lang\": \"cmn\" and a zf_*/zm_* voice to those lines;  more natural (CosyVoice): python core/tts/tts_zh.py {sys.argv[1]} {out}")
 model, voices = os.path.join(HERE, 'kokoro-v1.0.onnx'), os.path.join(HERE, 'voices-v1.0.bin')
 if not (os.path.exists(model) and os.path.exists(voices)):
     sys.exit(f'tts.py: the Kokoro model is not in {HERE}.\n  install the voice tier: sh plugin/skills/lemo-opuscar/scripts/setup.sh deps voice   (from the library root; it also fetches the model, about 350 MB)')

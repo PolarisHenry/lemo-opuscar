@@ -5,7 +5,7 @@ One example among many. Don't reuse its story, arc, shots, props or timings.
 Demo: *一个月饼的相思 · A Mooncake's Longing* (121.8 s) · `paper-lantern.mp4` · source in [`demo/`](demo/) · engine: three.js 0.170 (WebGL, SSAA 2×, VSM soft shadows, custom DoF + bloom compositor), Canvas2D-drawn paper layers, headless Chrome frame capture.
 
 
-**The demo narration is Mandarin Chinese** (edge-tts `zh-CN-XiaoxiaoNeural`) with Chinese subtitles. The library default is English with Kokoro (`core/tts/`); "Score structure" and "Engine reference" show how to switch. The demo runs 2 minutes; 45–120 s all work in this style.
+**The demo narration is Mandarin Chinese** (CosyVoice `longxiaochun`) with Chinese subtitles. The library default is English with Kokoro (`core/tts/`); "Score structure" and "Engine reference" show how to switch. The demo runs 2 minutes; 45–120 s all work in this style.
 
 ## Story & structure
 
@@ -47,7 +47,7 @@ Motion as built in the demo:
 
 ## Score structure
 
-**Voice (demo, Mandarin):** `edge-tts`, voice `zh-CN-XiaoxiaoNeural`, rate `+10%`, pitch `-2Hz` (`demo/tts.py`); per-line `rate` overrides in `script.json` (L01 `+5%`, quoted letters `+2%`, the poem L23 **`-12%`**, closing line `-6%`). Output is trimmed at 2 % of peak (20 ms pre-roll, 120 ms tail) → 48 kHz mono `vo/<id>.wav` + `vo/dur.json`.
+**Voice (demo, Mandarin):** `CosyVoice`, voice `longxiaochun`, rate `+10%`, pitch `-2Hz` (`demo/tts.py`); per-line `rate` overrides in `script.json` (L01 `+5%`, quoted letters `+2%`, the poem L23 **`-12%`**, closing line `-6%`). Output is trimmed at 2 % of peak (20 ms pre-roll, 120 ms tail) → 48 kHz mono `vo/<id>.wav` + `vo/dur.json`.
 - **Polyphonic characters**: feed TTS a homophone via a `say` field and keep the real text for subtitles: 「相思的"相"」→ `say: 原来，相思的香，是互相的香。` (TTS otherwise reads xiàng).
 - **Proof**: `demo/asr.py` (faster-whisper **medium**, zh) prints OK/DIFF per line; DIFFs that are homophones or numerals (八月十五 → 8月15, 她 → 他) are fine — listen to the rest.
 - **Word timings**: `demo/words.py <ids…>` → `vo/words.json` (whisper word timestamps). Shots read them via `E.word(id, k)`; **k is a whisper token index, not a character index** (whisper groups 「我们」 as one token) — print the list and count.
@@ -114,7 +114,7 @@ Rule: **back layers bright + translucent, front layers dark + opaque**. Interior
 styles/paper-lantern/demo/
   index.html        page: canvas + #sub + #credit, importmap → /node_modules/three (repo root is the static server root)
   script.json       lines: {id, text, rate?, say?, sub?}
-  tts.py asr.py words.py   edge-tts → vo/*.wav + dur.json; whisper proof; word timings → vo/words.json
+  tts.py asr.py words.py   CosyVoice → vo/*.wav + dur.json; whisper proof; word timings → vo/words.json
   src/main.js       timeline (GAP table), shot scheduler (lazy build / dispose), dissolves, subtitles, credits, window.render(t)
   src/shots/index.js   shot list, each start anchored to a line: start: L('L06') - .5
   src/shots/sNN_*.js   one module per shot: build(E) → { S, update(t), post(t), grade(t) }
@@ -124,7 +124,7 @@ styles/paper-lantern/demo/
   music/            candidate tracks + MUSIC.md (only km_Ripples.mp3 and km_Nu_Flute.mp3 are used)
 ```
 
-All commands from the repo root (`Lemo-Opuscar/`). Python = `.venv/bin/python`; `edge-tts` must be on `PATH` (user-level `pip install edge-tts`; it is not in `.venv`).
+All commands from the repo root (`Lemo-Opuscar/`). Python = `.venv/bin/python`; CosyVoice uses DashScope API (`DASHSCOPE_API_KEY`) or local server (`COSYVOICE_API_URL`).
 
 ```sh
 D=styles/paper-lantern/demo

@@ -21,7 +21,7 @@ Everything else installs in tiers, from the library root (`$LIB` in skill mode).
 | Command | Adds | Size |
 |---|---|---|
 | `sh plugin/skills/lemo-opuscar/scripts/setup.sh deps` | core: npm packages, headless browser, Python `.venv` (numpy, scipy, soundfile, soxr, pillow): render, synthesize sound, mux | ~350 MB |
-| `… setup.sh deps voice` | Kokoro + model (English, offline), edge-tts (Chinese, online), faster-whisper (voice check) | ~0.55 GB + ~145 MB Whisper model on first check |
+| `… setup.sh deps voice` | Kokoro + model (English, offline), CosyVoice (Chinese, online/local), faster-whisper (voice check) | ~0.55 GB + ~145 MB Whisper model on first check |
 | `… setup.sh deps music` | numba, for plucked strings (`pluck.py`); the sampler itself needs only the core | ~140 MB |
 | `sh tools/fetch.sh instruments <lib>` | a sample library: `freepats`, `karoryfer`, `salamander`, `vcsl`, `vsco2ce` or `all` | 70–400 MB each |
 | `sh tools/fetch.sh hdri` | HDRIs for 3D styles | 12 MB |
@@ -94,7 +94,7 @@ A small script (`cuecheck.py`, in `styles/<slug>/demo/tools/` of several demos) 
 
 - **TTS is only the default.** If the user brings a recording or names a voice, use that. Otherwise:
   - **English**: [Kokoro](https://github.com/thewh1teagle/kokoro-onnx), local, many voices (an unknown `voice` name makes `tts.py` print the full list; `af_` / `am_` are American, `bf_` / `bm_` British; cast the narrator for this film, not the demo's). `core/tts/tts.py lines.json out/` writes one WAV per line and a durations file. Its Chinese voices (`"lang": "cmn"`) work offline but sound plain.
-  - **Chinese**: `core/tts/tts_zh.py lines.json out/` uses [edge-tts](https://github.com/rany2/edge-tts) with Microsoft's neural voices (`zh-CN-XiaoxiaoNeural`, `zh-CN-YunxiNeural`…), with the same outputs as `tts.py`, a rate per line and the silence trimmed. **It needs a network connection.**
+  - **Chinese**: `core/tts/tts_zh.py lines.json out/` uses CosyVoice with neural voices (`longxiaochun`, `longcheng`…), with the same outputs as `tts.py`, a rate per line and the silence trimmed. Supports Alibaba DashScope API (`DASHSCOPE_API_KEY`) or local CosyVoice service (`COSYVOICE_API_URL`).
 - Spell numbers out in the TTS text and write them as digits in the subtitles.
 - **Check every line**: `core/tts/asr_check.py` transcribes each WAV with faster-whisper and compares it with the script (`--lang zh`: character by character); re-generate until it exits 0. A misheard character in a short Chinese line is normal: listen, and if it is right, put what the model heard in the line's `asr` field. It also writes word timestamps for placing lines and subtitles.
 - **Before mixing**: TTS has a high peak-to-average ratio. Compress the voice first, then balance by RMS: voice about 10 dB above the music.
