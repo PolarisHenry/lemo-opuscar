@@ -37,8 +37,12 @@ await Promise.all(fontList.map(f => document.fonts.load(f, '一页纸森林晚�
 await document.fonts.ready;
 const DURS = await (await fetch('assets/voices/dur.json')).json();
 await preloadSprites();
-// 封面插图用贴纸
-const coverImg = await new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = 'assets/sprites/view_front.png'; });
+// 封面插图用贴纸与角色
+const [tuanHoldStarImg, zazaBottleImg, moonImg] = await Promise.all([
+  new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = 'assets/sprites/pose_holdstar.png'; }),
+  new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = 'assets/sprites/zaza_holdbottle.png'; }),
+  new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = 'assets/sprites/grandma_moon.png'; }),
+]);
 
 const hdr = await new RGBELoader().loadAsync('assets/lythwood_lounge_2k.hdr'); hdr.mapping = THREE.EquirectangularReflectionMapping;
 scene.environment = hdr; scene.background = hdr; scene.backgroundBlurriness = .22;
@@ -78,11 +82,12 @@ clock.traverse(o => { if (o.isMesh && o.material.name.includes('Glass')) { o.mat
 }
 
 // ---------- 书 ----------
-const cover = coverCanvases((x, px, py, w, h) => { x.drawImage(coverImg, px, py, w, h); }, {
+const cover = coverCanvases({ tuan: tuanHoldStarImg, zaza: zazaBottleImg, moon: moonImg }, {
   title: TITLE,
   episode: '第一夜',
   epTitle: '谁把黑夜偷走了',
   series: '一页纸森林',
+  tagline: '小刺猬藏起了黑夜，整座森林亮得睡不着……',
 });
 const book = makeBook(cover);
 scene.add(book.root);
@@ -357,8 +362,8 @@ function zazaState(t) {
 // ---------- 摄像机（竖屏 1080×1920，v3 验证机位 + 结尾延长定帧） ----------
 const SH = [
   [ // 1 封面特写静止展示 → 翻开绘本 → 钩子全景 → 推近团团
-    [0.0, .015, .58, .88, 0, .015, .15, 40, 3.4, .75],
-    [1.1, .015, .54, .82, 0, .015, .15, 39, 3.2, .70],
+    [0.0, 0.0, .52, .72, 0, .015, .16, 46, 3.4, .68],
+    [1.1, 0.0, .48, .70, 0, .015, .16, 45, 3.2, .65],
     [2.1, .015, .18, .47, -.005, .05, .14, 34, 2.6, .38],
     [2.8, .005, .15, .44, -.01, .055, .15, 34, 2.6, .35],
     [3.53, -.028, .105, .32, -.032, .048, .173, 31, 2.5, .26],
