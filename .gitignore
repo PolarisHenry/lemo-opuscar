@@ -83,8 +83,32 @@ styles/*/demo/stills/*
 !styles/*/demo/stills/alt_*.jpg
 !styles/*/demo/stills/engine*.jpg
 
-# 用户自己的片子（agent 输出）
-/films/
+# 用户自己的片子（默认本地保留，不分发）
+/films/*
+!/films/night-01-stolen-night/
+films/night-01-stolen-night/out/
+films/night-01-stolen-night/*.mp4*
+films/night-01-stolen-night/*.bak
+films/night-01-stolen-night/*.wav.bak
+films/night-01-stolen-night/mix*.wav
+films/night-01-stolen-night/mix_*.wav.bak
+films/night-01-stolen-night/stills/
+films/night-01-stolen-night/tts/
+films/night-01-stolen-night/voices/
+films/night-01-stolen-night/node_modules/
+films/night-01-stolen-night/_v3_backup/
+films/night-01-stolen-night/assets/sprites_backup*/
+films/night-01-stolen-night/assets/sprites_old*/
+films/night-01-stolen-night/assets/sprites_rembg/
+films/night-01-stolen-night/assets/sprites_v2/
+films/night-01-stolen-night/assets/sprites_v3/
+films/night-01-stolen-night/assets/voices_*backup/
+films/night-01-stolen-night/assets/voices/.cache/
+films/night-01-stolen-night/assets/audition_v2/
+films/night-01-stolen-night/assets/edge*_cmp_*.png
+films/night-01-stolen-night/assets/fix_cmp_*.png
+films/night-01-stolen-night/music/*.wav
+!films/night-01-stolen-night/music/score.wav
 
 
 # Production logs are internal: they stay local
