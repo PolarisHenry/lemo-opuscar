@@ -1,11 +1,84 @@
+#!/usr/bin/env node
+/**
+ * 通用 9:16 竖屏精装绘本封面海报生成工具
+ * 用法：
+ *   node tools/make_cover.mjs films/night-01-stolen-night
+ *   node tools/make_cover.mjs films/night-02-goodnight-blanket
+ * 
+ * 读取目标工程下的 cover.json 生成 1080×1920 封面图 poster.jpg
+ */
+
 import { chromium } from 'playwright-core';
 import fs from 'fs';
 import path from 'path';
+import http from 'http';
 import { fileURLToPath } from 'url';
-import { EXE, ARGS } from '../../core/render/browser.mjs';
+import { EXE, ARGS } from '../core/render/browser.mjs';
 
-const dir = path.dirname(fileURLToPath(import.meta.url));
-process.chdir(dir);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
+
+const targetArg = process.argv[2] || '.';
+const targetDir = path.resolve(process.cwd(), targetArg);
+
+if (!fs.existsSync(targetDir)) {
+  console.error(`[Error] Target directory not found: ${targetDir}`);
+  process.exit(1);
+}
+
+const coverJsonPath = path.join(targetDir, 'cover.json');
+let config = {};
+if (fs.existsSync(coverJsonPath)) {
+  config = JSON.parse(fs.readFileSync(coverJsonPath, 'utf8'));
+} else {
+  console.warn(`[Warn] cover.json not found in ${targetDir}, using defaults.`);
+  config = {
+    series: '一页纸森林',
+    subSeries: '治愈绘本',
+    episodeBadge: '【 治愈睡前绘本 】',
+    title: '小兔团团',
+    epTitle: '《睡前故事》',
+    tagline: '每晚翻一页森林，把黑夜过慢一点……',
+    motto: '~ 每晚翻一页森林 · 把黑夜过慢一点 ~'
+  };
+}
+
+// 静态文件轻量服务
+const MIME = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.woff2': 'font/woff2'
+};
+
+const server = http.createServer((req, res) => {
+  let reqPath = decodeURIComponent(req.url.split('?')[0]);
+  if (reqPath === '/') reqPath = '/index.html';
+  
+  // 优先在 targetDir 查找，其次在 ROOT 查找
+  let filePath = path.join(targetDir, reqPath);
+  if (!fs.existsSync(filePath)) {
+    filePath = path.join(ROOT, reqPath);
+  }
+
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    const ext = path.extname(filePath).toLowerCase();
+    res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream', 'Access-Control-Allow-Origin': '*' });
+    fs.createReadStream(filePath).pipe(res);
+  } else {
+    res.writeHead(404);
+    res.end('Not found: ' + reqPath);
+  }
+});
+
+await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+const port = server.address().port;
+const BASE = `http://127.0.0.1:${port}`;
 
 const browser = await chromium.launch({ executablePath: EXE, args: ARGS });
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
@@ -27,9 +100,24 @@ canvas { display: block; }
 await document.fonts.load('16px "ZCOOL KuaiLe"');
 await document.fonts.ready;
 
-const tuan = await new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = 'assets/sprites/pose_holdstar.png'; });
-const zaza = await new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = 'assets/sprites/zaza_holdbottle.png'; });
-const moon = await new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = 'assets/sprites/grandma_moon.png'; });
+const cfg = ${JSON.stringify(config)};
+
+const loadImg = src => src ? new Promise(r => {
+  const i = new Image();
+  i.onload = () => r(i);
+  i.onerror = () => r(null);
+  i.src = src;
+}) : Promise.resolve(null);
+
+const tuanSrc = cfg.sprites?.tuan || 'assets/sprites/pose_holdstar.png';
+const compSrc = cfg.sprites?.companion || 'assets/sprites/zaza_holdbottle.png';
+const skySrc = cfg.sprites?.sky || 'assets/sprites/grandma_moon.png';
+
+const [tuan, companion, skyImg] = await Promise.all([
+  loadImg(tuanSrc),
+  loadImg(compSrc),
+  loadImg(skySrc)
+]);
 
 const W = 1080, H = 1920;
 const c = document.getElementById('cv');
@@ -126,33 +214,34 @@ x.fill();
 
 x.fillStyle = GOLD;
 x.font = '500 32px ' + FONT;
-x.fillText('✦  一 页 纸 森 林 · 治 愈 绘 本  ✦', W * 0.5, pillY);
+x.fillText('✦  ' + (cfg.series || '一页纸森林') + ' · ' + (cfg.subSeries || '治愈绘本') + '  ✦', W * 0.5, pillY);
 
-// 3.2 醒目集数徽标（让短视频主页网格一眼看清是第几集！）
+// 3.2 醒目集数徽标
 const epPillY = 248;
 x.fillStyle = GOLD;
 x.font = 'bold 44px ' + FONT;
-x.fillText('【 第 一 夜 · 哄 睡 篇 】', W * 0.5, epPillY);
+x.fillText(cfg.episodeBadge || '【 第一夜 · 哄睡篇 】', W * 0.5, epPillY);
 
 // 3.3 大号主标题《小兔团团》
 const titleY = 375;
+const mainTitle = cfg.title ? (cfg.title.startsWith('《') ? cfg.title : '《' + cfg.title + '》') : '《小兔团团》';
 x.font = 'bold 152px ' + FONT;
-// 立体浮雕阴影
 x.fillStyle = GOLD_SH;
-x.fillText('《小兔团团》', W * 0.5 + 4, titleY + 5);
+x.fillText(mainTitle, W * 0.5 + 4, titleY + 5);
 x.fillStyle = GOLD;
-x.fillText('《小兔团团》', W * 0.5, titleY);
+x.fillText(mainTitle, W * 0.5, titleY);
 x.fillStyle = GOLD_HI;
 x.font = 'bold 150px ' + FONT;
-x.fillText('《小兔团团》', W * 0.5 - 1, titleY - 2);
+x.fillText(mainTitle, W * 0.5 - 1, titleY - 2);
 
-// 3.4 分集名《谁把黑夜偷走了》
+// 3.4 分集名
 const subY = 480;
+const epTitle = cfg.epTitle ? (cfg.epTitle.startsWith('《') ? cfg.epTitle : '《' + cfg.epTitle + '》') : '《谁把黑夜偷走了》';
 x.font = 'bold 74px ' + FONT;
 x.fillStyle = GOLD_SH;
-x.fillText('《谁把黑夜偷走了》', W * 0.5 + 3, subY + 3);
+x.fillText(epTitle, W * 0.5 + 3, subY + 3);
 x.fillStyle = GOLD;
-x.fillText('《谁把黑夜偷走了》', W * 0.5, subY);
+x.fillText(epTitle, W * 0.5, subY);
 
 // 烫金分割饰线
 x.lineWidth = 2.5;
@@ -169,7 +258,7 @@ for (let i = 0; i < 8; i++) {
 }
 x.closePath(); x.fill();
 
-// 4. 中央巨型童话拱形画框（Hero Illustration Arch）
+// 4. 中央巨型童话拱形画框
 const aw = 780, ah = 900;
 const ax0 = (W - aw) / 2, ay0 = 575;
 const acx = W * 0.5;
@@ -224,16 +313,16 @@ for (let i = 0; i < 55; i++) {
   x.fill();
 }
 
-// 月亮婆婆
-if (moon) {
-  const mw = 220, mh = mw * (moon.height / moon.width);
+// 天空客串（如月亮婆婆/太阳/云朵）
+if (skyImg) {
+  const mw = 220, mh = mw * (skyImg.height / skyImg.width);
   const mx = ax0 + aw - mw - 30, my = ay0 + 50;
   const mg = x.createRadialGradient(mx + mw * 0.5, my + mh * 0.5, 30, mx + mw * 0.5, my + mh * 0.5, 170);
   mg.addColorStop(0, 'rgba(255, 235, 140, 0.45)');
   mg.addColorStop(1, 'rgba(255, 235, 140, 0)');
   x.fillStyle = mg;
   x.fillRect(mx - 80, my - 80, mw + 160, mh + 160);
-  x.drawImage(moon, mx, my, mw, mh);
+  x.drawImage(skyImg, mx, my, mw, mh);
 }
 
 // 远景纸艺山坡与近景草地
@@ -252,14 +341,16 @@ x.beginPath();
 x.ellipse(acx + 30, ay0 + ah * 0.96, aw * 0.48, 65, 0, 0, Math.PI * 2);
 x.fill();
 
-// 角色：扎扎与团团
-if (tuan && zaza) {
-  const zw = 280, zh = zw * (zaza.height / zaza.width);
-  const zx = acx + 65, zy = ay0 + ah - zh - 25;
-  x.drawImage(zaza, zx, zy, zw, zh);
+// 角色：伴随角色与团团
+if (tuan) {
+  if (companion) {
+    const zw = 280, zh = zw * (companion.height / companion.width);
+    const zx = acx + 65, zy = ay0 + ah - zh - 25;
+    x.drawImage(companion, zx, zy, zw, zh);
+  }
 
   const tw = 440, th = tw * (tuan.height / tuan.width);
-  const tx = acx - 245, ty = ay0 + ah - th - 40;
+  const tx = companion ? acx - 245 : acx - tw / 2, ty = ay0 + ah - th - 40;
 
   // 纸星星金光漫射
   const starX = tx + tw * 0.72, starY = ty + th * 0.48;
@@ -298,12 +389,12 @@ x.restore();
 const botStoryY = 1580;
 x.fillStyle = '#f5e9d3';
 x.font = '400 42px ' + FONT;
-x.fillText('小刺猬偷走了黑夜，整座森林亮得睡不着……', W * 0.5, botStoryY);
+x.fillText(cfg.tagline || '小刺猬偷走了黑夜，整座森林亮得睡不着……', W * 0.5, botStoryY);
 
 const botMottoY = 1680;
 x.fillStyle = GOLD;
 x.font = '500 46px ' + FONT;
-x.fillText('~ 每晚翻一页森林 · 把黑夜过慢一点 ~', W * 0.5, botMottoY);
+x.fillText(cfg.motto || '~ 每晚翻一页森林 · 把黑夜过慢一点 ~', W * 0.5, botMottoY);
 
 // 底部烫金精致花尾
 x.lineWidth = 2;
@@ -323,16 +414,25 @@ window.READY = true;
 </html>
 `;
 
-fs.writeFileSync('cover_card.html', html);
-const { serve } = await import('./serve.mjs');
-const { server, port } = await serve(dir);
+// 写入临时 HTML
+const tempHtmlPath = path.join(targetDir, '_temp_cover.html');
+fs.writeFileSync(tempHtmlPath, html);
 
-await page.goto(`http://127.0.0.1:${port}/cover_card.html`);
+await page.goto(`${BASE}/_temp_cover.html`);
 await page.waitForFunction(() => window.READY === true, null, { timeout: 30000 });
-fs.mkdirSync('stills', { recursive: true });
-await page.screenshot({ path: 'stills/cover_card_1080x1920.jpg', type: 'jpeg', quality: 95 });
-await page.screenshot({ path: 'poster.jpg', type: 'jpeg', quality: 95 });
-console.log('saved stills/cover_card_1080x1920.jpg and updated poster.jpg');
+
+fs.mkdirSync(path.join(targetDir, 'stills'), { recursive: true });
+const outPosterPath = path.join(targetDir, 'poster.jpg');
+const outStillPath = path.join(targetDir, 'stills', 'cover_1080x1920.jpg');
+
+await page.screenshot({ path: outPosterPath, type: 'jpeg', quality: 95 });
+await page.screenshot({ path: outStillPath, type: 'jpeg', quality: 95 });
+console.log(`[Success] Generated cover for: ${targetDir}`);
+console.log(`  -> ${outPosterPath}`);
+console.log(`  -> ${outStillPath}`);
+
+// 清理临时文件
+fs.unlinkSync(tempHtmlPath);
 
 server.close();
 await browser.close();

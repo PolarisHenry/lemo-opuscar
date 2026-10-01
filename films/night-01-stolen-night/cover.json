@@ -1,0 +1,14 @@
+{
+  "series": "一页纸森林",
+  "subSeries": "治愈绘本",
+  "episodeBadge": "【 第一夜 · 哄睡篇 】",
+  "title": "小兔团团",
+  "epTitle": "《谁把黑夜偷走了》",
+  "tagline": "小刺猬偷走了黑夜，整座森林亮得睡不着……",
+  "motto": "~ 每晚翻一页森林 · 把黑夜过慢一点 ~",
+  "sprites": {
+    "tuan": "assets/sprites/pose_holdstar.png",
+    "companion": "assets/sprites/zaza_holdbottle.png",
+    "sky": "assets/sprites/grandma_moon.png"
+  }
+}
