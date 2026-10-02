@@ -1,0 +1,14 @@
+{
+  "series": "一页纸森林",
+  "subSeries": "治愈绘本",
+  "episodeBadge": "【 第二夜 · 晚安篇 】",
+  "title": "小兔团团",
+  "epTitle": "《晚安被子去旅行》",
+  "tagline": "起风了，被子飞走了！团团翻开书页追了一整夜……",
+  "motto": "~ 每晚翻一页森林 · 把黑夜过慢一点 ~",
+  "sprites": {
+    "tuan": "assets/sprites/view_front.png",
+    "companion": "assets/sprites/doudou_sleep.png",
+    "sky": "assets/sprites/grandma_moon.png"
+  }
+}

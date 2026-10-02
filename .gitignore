@@ -110,6 +110,18 @@ films/night-01-stolen-night/assets/fix_cmp_*.png
 films/night-01-stolen-night/music/*.wav
 !films/night-01-stolen-night/music/score.wav
 
+!/films/night-02-goodnight-quilt/
+films/night-02-goodnight-quilt/out/
+films/night-02-goodnight-quilt/*.mp4*
+films/night-02-goodnight-quilt/*.bak
+films/night-02-goodnight-quilt/mix*.wav
+films/night-02-goodnight-quilt/stills/
+films/night-02-goodnight-quilt/voices/
+films/night-02-goodnight-quilt/node_modules
+films/night-02-goodnight-quilt/node_modules/
+films/night-02-goodnight-quilt/assets/voices/
+films/night-02-goodnight-quilt/music/*.wav
+
 
 # Production logs are internal: they stay local
 styles/*/PRODUCTION_LOG*

@@ -1,0 +1,17 @@
+《晚安被子去旅行》—— 一页纸森林 · 第二夜（纸片立体书·哄睡篇）
+
+故事与分镜：一页纸森林系列 · 第 2 夜《晚安被子去旅行》
+配乐 Music：
+  "Heartwarming" — Kevin MacLeod (incompetech.com) · CC BY 4.0 授权
+配音 Voice：CosyVoice · longxiaochun（知性温柔女声，语速 -5%）
+音效 SFX：程序化合成（风声、纸页翻动、落地闷响、星光铃音，详见 mix.py）
+场景道具 Props：Desk Lamp · Alarm Clock — Poly Haven (CC0)
+环境光 HDRI：Lythwood Lounge — Poly Haven (CC0)
+
+角色立绘与剪纸贴纸：
+  - 小兔团团（TuanTuan）
+  - 刺猬扎扎（ZaZa）
+  - 月亮婆婆（Grandma Moon）
+  - 小田鼠豆豆（DouDou）
+立体书引擎：lemo-opuscar paper-popup 纸片立体书引擎
+规格：1080×1920 60fps 竖屏，时长 41.5s，响度 -14 LUFS
